@@ -1,0 +1,37 @@
+export HOME
+
+SCITERSDK = $HOME/.sciter/sciter-sdk
+
+# resources.cpp
+: ../ui |> "$(SCITERSDK)/bin.gtk/x64/packfolder" ui %o -v "resources" |> resources.cpp
+
+ifeq (@(PLATFORM),linux)
+  CFLAGS = `pkg-config --cflags gtk+-3.0` -I"$(SCITERSDK)/include"
+  LFLAGS = `pkg-config --libs gtk+-3.0` -L . -ldl -lsciter-gtk
+
+  # main.o
+  : main.cpp | resources.cpp |> g++ -c %f $(CFLAGS) -o %o |> main.o
+  # sciter-gtk-main.cpp
+  : |> g++ -c "$(SCITERSDK)/include/sciter-gtk-main.cpp" $(CFLAGS) -o %o |> sciter-gtk-main.o
+  # libsciter-gtk.so
+  : |> cp "$(SCITERSDK)/bin.gtk/x64/libsciter-gtk.so" %o |> libsciter-gtk.so
+  # app
+  : *.o | libsciter-gtk.so |> g++ %f $(LFLAGS) -o %o |> app
+endif
+ifeq (@(PLATFORM),win)
+  CFLAGS = -I"$(SCITERSDK)/include"
+  LFLAGS = -municode -lole32
+
+  # main.o
+  : main.cpp | resources.cpp |> /usr/bin/x86_64-w64-mingw32-g++ -c %f $(CFLAGS) -o %o |> main.o
+  # sciter-win-main.cpp
+  : |> /usr/bin/x86_64-w64-mingw32-g++ -c "$(SCITERSDK)/include/sciter-win-main.cpp" $(cflags) -o %o |> sciter-win-main.o
+  # sciter.dll
+  : |> cp "$(SCITERSDK)/bin/64/sciter.dll" %o |> sciter.dll
+  # libstdc++-6.dll , libwinpthread-1.dll , libgcc_s_seh-1.dll
+  : |> cp /usr/x86_64-w64-mingw32/bin/libstdc++-6.dll . |> libstdc++-6.dll
+  : |> cp /usr/x86_64-w64-mingw32/bin/libwinpthread-1.dll . |> libwinpthread-1.dll
+  : |> cp /usr/x86_64-w64-mingw32/bin/libgcc_s_seh-1.dll . |> libgcc_s_seh-1.dll
+  # app
+  : *.o | sciter.dll |> /usr/bin/x86_64-w64-mingw32-g++ %f $(LFLAGS) -o %o |> app.exe
+endif

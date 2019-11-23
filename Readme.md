@@ -20,8 +20,12 @@ mv $TMP/sciter-starter-master ~/.sciter
 cp ~/.sciter/sciter-starter.sh ~/bin
 ```
 
+## IDE
+
+The template works without any IDE, i.e. just with a text editor. Though, for debugging, code hints and "go to definition" IDE settings are needed. You can specify an IDE during template initialization, but currently only vscode is supported.
+
 ## About
 
 A more complete templating repository can be found on: <https://github.com/ramon-mendes/SciterBootstrap> . Please use that if it suits your needs. This tool is meant to be used on Linux to create a project-template that uses the [sciter-sdk](https://sciter.com) and can be compiled for windows (via mingw) and linux.
 
-This tool depends on python, meson, mingw and curl.
+This tool depends on python, tup, mingw, curl, wget, git.
