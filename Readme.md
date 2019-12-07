@@ -22,7 +22,7 @@ cp ~/.sciter/sciter-starter.sh ~/bin
 
 ## IDE
 
-The template works without any IDE, i.e. just with a text editor. Though, for debugging, code hints and "go to definition" IDE settings are needed. You can specify an IDE during template initialization, but currently only vscode is supported.
+The template works without any IDE, i.e. just with a text editor. Though, for debugging, code hints and "go to definition" IDE settings are needed. You can specify an IDE during template initialization, currently only vscode is supported. Of course you can setup your own IDE. The file `Tupfile` can give you hints on which settings to apply.
 
 ## About
 
