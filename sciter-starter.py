@@ -10,7 +10,7 @@ def download_file(url, dest):
 
   response = requests.get(url, stream=True)
   # estimate size (~110MB) if not given
-  size = int(response.headers.get('Content-Length', '110000000').strip())
+  size = int(response.headers.get('Content-Length', '130000000').strip())
   written = 0
   file = []
   update_counter = 0
@@ -84,30 +84,46 @@ def preview():
   subprocess.run( [os.path.expanduser('~/.sciter/sciter-sdk/bin.gtk/x64/scapp'), path] )
 
 def inspector():
+  # see https://sciter.com/forums/topic/inspector-stop-working-after-1st-failure/
+  try:
+    os.remove('/tmp/sciter-pipe-sciter-inspector')
+  except FileNotFoundError as e:
+    pass
   subprocess.run( [os.path.expanduser('~/.sciter/sciter-sdk/bin.gtk/x64/inspector')] )
 
 def build():
   subprocess.run('tup -jupdater.full_deps=1'.split(' '))
 
+def manual():
+  subprocess.run( [os.path.expanduser('~/.sciter/sciter-sdk/bin.gtk/x64/usciter')] )
+
 
 if len(sys.argv) < 2:
-  print(('usage:\n\n   \033[1msciter-starter.py\033[22m (update|init|preview|build)\n\n'
+  print(('usage:\n\n   \033[1msciter-starter.py\033[22m (update|init|preview|build|manual)\n\n'
          'update                      Update the sdk.\n'
          'init    [--ide vscode]      Init template in the current working directory. If --ide is given,\n'
          '                            IDE-specific files are created. Currently only vscode is supported.\n'
          'preview [path]              Preview your ui with scapp. Path defaults to ./ui/main.html.\n'
          'inspector                   Start the inspector.\n'
          'build                       Compile your project in a distributable format for windows and linux.\n'
+         'manual                      Open sciter\'s official manual.\n'
          '\n\n'))
   exit()
 
-if sys.argv[1] == 'update':
-  updatesdk()
-elif sys.argv[1] == 'init':
-  init_template()
-elif sys.argv[1] == 'preview':
-  preview()
-elif sys.argv[1] == 'inspector':
-  inspector()
-elif sys.argv[1] == 'build':
-  build()
+try:
+  if sys.argv[1] == 'update':
+    updatesdk()
+  elif sys.argv[1] == 'init':
+    init_template()
+  elif sys.argv[1] == 'preview':
+    preview()
+  elif sys.argv[1] == 'inspector':
+    inspector()
+  elif sys.argv[1] == 'build':
+    build()
+  elif sys.argv[1] == 'manual':
+    manual()
+  else:
+    print('unknown command: \'' + sys.argv[1] + '\'')
+except (KeyboardInterrupt, SystemExit):
+  exit()
